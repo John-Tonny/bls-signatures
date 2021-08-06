@@ -59,23 +59,24 @@ if(MSVC)
   )
 else()
   set(OPREFIX object_)
+  set(LIBRARIES_TO_COMBINE
+    COMMAND ${CMAKE_COMMAND} -E make_directory ${OPREFIX}$<TARGET_NAME:blstmp> && cd ${OPREFIX}$<TARGET_NAME:blstmp> && ${CMAKE_AR} -x $<TARGET_FILE:blstmp>
+    COMMAND ${CMAKE_COMMAND} -E make_directory ${OPREFIX}$<TARGET_NAME:relic_s> && cd ${OPREFIX}$<TARGET_NAME:relic_s> && ${CMAKE_AR} -x $<TARGET_FILE:relic_s>
+  )
+
   find_library(GMP_NAME NAMES libgmp.a gmp)
-  if (GMP_FOUND)
+  if(NOT ${GMP_NAME} STREQUAL "GMP_NAME-NOTFOUND")
     list(APPEND LIBRARIES_TO_COMBINE COMMAND ${CMAKE_COMMAND} -E make_directory ${OPREFIX}gmp && cd ${OPREFIX}gmp && ${CMAKE_AR} -x ${GMP_NAME})
   endif()
 
   find_library(SODIUM_NAME NAMES libsodium.a sodium)
-  if (SODIUM_FOUND)
+  if(NOT ${SODIUM_NAME} STREQUAL "SODIUM_NAME-NOTFOUND")
     message("SODIUM_FOUND in src/CMakeLists.txt")
     list(APPEND LIBRARIES_TO_COMBINE COMMAND ${CMAKE_COMMAND} -E make_directory ${OPREFIX}sodium && cd ${OPREFIX}sodium && ${CMAKE_AR} -x ${SODIUM_NAME})
     target_compile_definitions(blstmp PRIVATE BLSALLOC_SODIUM=1)
   else()
     target_compile_definitions(blstmp PRIVATE)
   endif()
-  set(LIBRARIES_TO_COMBINE
-    COMMAND ${CMAKE_COMMAND} -E make_directory ${OPREFIX}$<TARGET_NAME:blstmp> && cd ${OPREFIX}$<TARGET_NAME:blstmp> && ${CMAKE_AR} -x $<TARGET_FILE:blstmp>
-    COMMAND ${CMAKE_COMMAND} -E make_directory ${OPREFIX}$<TARGET_NAME:relic_s> && cd ${OPREFIX}$<TARGET_NAME:relic_s> && ${CMAKE_AR} -x $<TARGET_FILE:relic_s>
-  )
 
   add_custom_target(combined_custom
     ${LIBRARIES_TO_COMBINE}
