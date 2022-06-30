@@ -65,7 +65,8 @@ PYBIND11_MODULE(blspy, m)
                 return PrivateKey(k);
             })
         .def("get_g1", [](const PrivateKey &k) { return k.GetG1Element(); })
-        .def("aggregate", &PrivateKey::Aggregate)
+	.def("get_public_key", &PrivateKey::GetPublicKey)
+	.def("aggregate", &PrivateKey::Aggregate)
         .def(py::self == py::self)
         .def(py::self != py::self)
         .def("__repr__", [](const PrivateKey &k) {
@@ -90,7 +91,10 @@ PYBIND11_MODULE(blspy, m)
 
     py::class_<BasicSchemeMPL>(m, "BasicSchemeMPL")
         .def("sk_to_g1", [](const PrivateKey &seckey){ return BasicSchemeMPL().SkToG1(seckey); })
-        .def(
+        .def("get_public_key", [](const PrivateKey& sk) {
+        	return BasicSchemeMPL().GetPublicKey(sk);
+            })
+	.def(
             "key_gen",
             [](const py::bytes &b) {
                 std::string str(b);
@@ -143,6 +147,9 @@ PYBIND11_MODULE(blspy, m)
 
     py::class_<AugSchemeMPL>(m, "AugSchemeMPL")
         .def("sk_to_g1", [](const PrivateKey &seckey){ return AugSchemeMPL().SkToG1(seckey); })
+        .def("get_public_key", [](const PrivateKey& sk) {
+        	return AugSchemeMPL().GetPublicKey(sk);
+            })
         .def(
             "key_gen",
             [](const py::bytes &b) {
@@ -205,6 +212,9 @@ PYBIND11_MODULE(blspy, m)
 
     py::class_<PopSchemeMPL>(m, "PopSchemeMPL")
         .def("sk_to_g1", [](const PrivateKey &seckey){ return PopSchemeMPL().SkToG1(seckey); })
+        .def("get_public_key", [](const PrivateKey& sk) {
+        	return PopSchemeMPL().GetPublicKey(sk);
+            })
         .def(
             "key_gen",
             [](const py::bytes &b) {
@@ -269,6 +279,45 @@ PYBIND11_MODULE(blspy, m)
                 std::string s(msg);
                 vector<uint8_t> v(s.begin(), s.end());
                 return PopSchemeMPL().FastAggregateVerify(pks, v, sig);
+            });
+
+    py::class_<LegacySchemeMPL>(m, "LegacySchemeMPL")
+        .def(
+            "key_gen",
+            [](const py::bytes &b) {
+                std::string str(b);
+                const uint8_t *input =
+                    reinterpret_cast<const uint8_t *>(str.data());
+                const vector<uint8_t> inputVec(input, input + len(b));
+                return LegacySchemeMPL().KeyGen(inputVec);
+            })
+        .def("get_public_key", [](const PrivateKey& sk) {
+                return LegacySchemeMPL().GetPublicKey(sk);
+            })
+        .def("derive_child_sk", [](const PrivateKey& sk, uint32_t index){
+            return LegacySchemeMPL().DeriveChildSk(sk, index);
+        })
+        .def("derive_child_sk_unhardened", [](const PrivateKey& sk, uint32_t index){
+            return LegacySchemeMPL().DeriveChildSkUnhardened(sk, index);
+        })
+        .def("derive_child_pk_unhardened", [](const G1Element& pk, uint32_t index){
+            return LegacySchemeMPL().DeriveChildPkUnhardened(pk, index);
+        })
+        .def(
+            "sign",
+            [](const PrivateKey &pk, const py::bytes &msg) {
+                std::string s(msg);
+                vector<uint8_t> v(s.begin(), s.end());
+                return LegacySchemeMPL().Sign(pk, Bytes(v));
+            })
+        .def(
+            "verify",
+            [](const G1Element &pk,
+               const py::bytes &msg,
+               const G2Element &sig) {
+                std::string s(msg);
+                vector<uint8_t> v(s.begin(), s.end());
+                return LegacySchemeMPL().Verify(pk, Bytes(v), sig);
             });
 
     py::class_<G1Element>(m, "G1Element")
@@ -420,6 +469,7 @@ PYBIND11_MODULE(blspy, m)
         .def("generator", &G2Element::Generator)
         .def("from_message", py::overload_cast<const std::vector<uint8_t>&, const uint8_t*, int, bool>(&G2Element::FromMessage))
         .def("negate", &G2Element::Negate)
+        .def("serialize", &G2Element::Serialize)
         .def(
             "__deepcopy__",
             [](const G2Element &g2, const py::object &memo) {

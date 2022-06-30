@@ -1235,6 +1235,45 @@ TEST_CASE("Schemes") {
         G2Element thresholdSignature = Threshold::SignatureRecover(vecSignatureShares, {vecIds.begin(), vecIds.end()});
         REQUIRE(thresholdSignature == thresholdSignatureExpected);
         REQUIRE(LegacySchemeMPL().Verify(thresholdPublicKey, Bytes{vecSignHash}, thresholdSignature));
+
+	std::cout << "Legacy scheme" << std::endl;
+ 
+ 	std::string strSignHash1{"b6d8ee31bbd375dfd55d5fb4b02cfccc68709e64f4c5ffcd3895ceb46540311d"};
+        std::string strSecretKey1{"377091f0e728463bc2da7d546c53b9f6b81df4a1cc1ab5bf29c5908b7151a32d"};
+        PrivateKey sk1 = PrivateKey::FromByteVector(Util::HexToBytes(strSecretKey1));
+        G2Element sig1 = LegacySchemeMPL().Sign(sk1, Bytes(vecSignHash));
+
+	std::vector<uint8_t> sk2 = sk1.Serialize(true);
+	std::cout << "privateKey:";
+	for(int i=0; i< sk2.size(); i++){
+  	  std::cout << std::hex << static_cast<int>(sk2[i]) ;
+	}
+	std::cout << std::endl;
+
+	std::cout << "publicKey:";
+        std::vector<uint8_t> pk2 = sk1.GetG1Element().Serialize(true);
+        for(int i=0; i< pk2.size(); i++){
+          std::cout << std::hex << static_cast<int>(pk2[i]) ;
+        }
+        std::cout << std::endl;
+
+	std::cout << "msgHash:";
+        for(int i=0; i< vecSignHash.size(); i++){
+          std::cout << std::hex << static_cast<int>(vecSignHash[i]) ;
+        }
+        std::cout << std::endl;
+
+
+	std::cout << "signature:";
+        std::vector<uint8_t> sig2 = sig1.Serialize(true);
+        for(int i=0; i< sig2.size(); i++){
+          std::cout << std::hex << static_cast<int>(sig2[i]) ;
+        }
+        std::cout << std::endl;
+
+
+	std::cout << "LegacyScheme end" << std::endl;
+
     }
 }
 

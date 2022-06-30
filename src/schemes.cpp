@@ -98,6 +98,11 @@ G1Element CoreMPL::SkToG1(const PrivateKey &seckey)
     return seckey.GetG1Element();
 }
 
+vector<uint8_t> CoreMPL::GetPublicKey(const PrivateKey &seckey, bool fLegacy)
+{
+    return seckey.GetG1Element().Serialize(fLegacy);
+}
+
 G2Element CoreMPL::Sign(const PrivateKey &seckey, const vector<uint8_t> &message)
 {
     return CoreMPL::Sign(seckey, Bytes(message));
@@ -361,6 +366,11 @@ G1Element CoreMPL::DeriveChildPkUnhardened(const G1Element& pk, uint32_t index) 
     return HDKeys::DeriveChildG1Unhardened(pk, index);
 }
 
+std::vector<uint8_t> BasicSchemeMPL::GetPublicKey(const PrivateKey &seckey)
+{
+  return CoreMPL::GetPublicKey(seckey, false);
+}
+
 bool BasicSchemeMPL::AggregateVerify(const vector<vector<uint8_t>> &pubkeys,
                                      const vector<vector<uint8_t>> &messages,
                                      const vector<uint8_t> &signature)
@@ -429,6 +439,11 @@ bool BasicSchemeMPL::AggregateVerify(const vector<G1Element>& pubkeys,
         return false;
     }
     return CoreMPL::AggregateVerify(pubkeys, messages, signature);
+}
+
+std::vector<uint8_t> AugSchemeMPL::GetPublicKey(const PrivateKey &seckey)
+{
+  return CoreMPL::GetPublicKey(seckey, false);
 }
 
 G2Element AugSchemeMPL::Sign(const PrivateKey &seckey, const vector<uint8_t> &message)
@@ -558,6 +573,11 @@ bool AugSchemeMPL::AggregateVerify(const vector<G1Element>& pubkeys,
     return CoreMPL::AggregateVerify(pubkeys, augMessages, signature);
 }
 
+std::vector<uint8_t> PopSchemeMPL::GetPublicKey(const PrivateKey &seckey)
+{
+  return CoreMPL::GetPublicKey(seckey, false);
+}
+
 G2Element PopSchemeMPL::PopProve(const PrivateKey &seckey)
 {
     const G1Element& pk = seckey.GetG1Element();
@@ -642,6 +662,11 @@ bool PopSchemeMPL::FastAggregateVerify(const vector<Bytes>& pubkeys,
     }
 
     return PopSchemeMPL::FastAggregateVerify(pkelements, message, G2Element::FromBytes(signature));
+}
+
+std::vector<uint8_t> LegacySchemeMPL::GetPublicKey(const PrivateKey &seckey)
+{
+  return CoreMPL::GetPublicKey(seckey, true);
 }
 
 G2Element LegacySchemeMPL::Sign(const PrivateKey& seckey, const Bytes& message)

@@ -50,6 +50,8 @@ public:
 
     virtual G1Element SkToG1(const PrivateKey &seckey);
 
+    virtual std::vector<uint8_t> GetPublicKey(const PrivateKey &seckey, bool fLegacy = false);
+
     virtual G2Element Sign(const PrivateKey &seckey, const vector<uint8_t> &message);
     virtual G2Element Sign(const PrivateKey& seckey, const Bytes& message);
 
@@ -117,7 +119,11 @@ class BasicSchemeMPL : public CoreMPL {
 public:
     virtual ~BasicSchemeMPL() {};
     static const std::string CIPHERSUITE_ID;
+
     BasicSchemeMPL() : CoreMPL(BasicSchemeMPL::CIPHERSUITE_ID) {}
+
+    virtual vector<uint8_t> GetPublicKey(const PrivateKey &seckey) final;
+
     bool AggregateVerify(const vector<vector<uint8_t>> &pubkeys,
                          const vector<vector<uint8_t>> &messages,
                          const vector<uint8_t> &signature) override;
@@ -141,6 +147,8 @@ public:
     virtual ~AugSchemeMPL() {};
     static const std::string CIPHERSUITE_ID;
     AugSchemeMPL() : CoreMPL(AugSchemeMPL::CIPHERSUITE_ID) {}
+
+    virtual vector<uint8_t> GetPublicKey(const PrivateKey &seckey) final;
 
     G2Element Sign(const PrivateKey &seckey, const vector<uint8_t> &message) override;
 
@@ -197,6 +205,8 @@ public:
     static const std::string POP_CIPHERSUITE_ID;
     PopSchemeMPL() : CoreMPL(PopSchemeMPL::CIPHERSUITE_ID) {}
 
+    virtual vector<uint8_t> GetPublicKey(const PrivateKey &seckey) final;
+
     G2Element PopProve(const PrivateKey &seckey);
 
     bool PopVerify(const G1Element &pubkey, const G2Element &signature_proof);
@@ -226,12 +236,14 @@ public:
  * This scheme reflects the Sign/Verify behaviour of older bls-signatures library versions (<0.1.29).
  */
 class LegacySchemeMPL : public CoreMPL {
-
+    using CoreMPL::Aggregate;
 public:
     virtual ~LegacySchemeMPL() {};
     LegacySchemeMPL() : CoreMPL(std::string{}) {}
 
     virtual vector<uint8_t> SkToPk(const PrivateKey &seckey) final { throw std::runtime_error("Not supported in LegacySchemeMPL"); }
+
+    virtual vector<uint8_t> GetPublicKey(const PrivateKey &seckey) final;
 
     G2Element Sign(const PrivateKey &seckey, const vector<uint8_t> &message) final { throw std::runtime_error("Not supported in LegacySchemeMPL"); }
     G2Element Sign(const PrivateKey &seckey, const Bytes& message) final;

@@ -114,6 +114,14 @@ const G1Element& PrivateKey::GetG1Element() const
     return g1Cache;
 }
 
+std::vector<uint8_t> PrivateKey::GetPublicKey(const bool fLegacy) const
+{
+    g1Cache = PrivateKey::GetG1Element();
+
+    return g1Cache.Serialize(fLegacy);
+
+}
+
 const G2Element& PrivateKey::GetG2Element() const
 {
     if (!fG2CacheValid) {
@@ -242,9 +250,20 @@ G2Element PrivateKey::SignG2(
 
     g2_st* pt = Util::SecAlloc<g2_st>(1);
 
+    /*
+    std::cout << "signG2:";
+    for(int i=0; i<len; i++){
+      std::cout << std::hex << static_cast<int>(*msg);
+      msg++;
+    }
+    std::cout << std::endl;
+    */
+
     if (fLegacy) {
+    	// std::cout << "legacy: true" << std::endl;
         ep2_map_legacy(pt, msg, BLS::MESSAGE_HASH_LEN);
     } else {
+    	// std::cout << "legacy: false" << std::endl;
         ep2_map_dst(pt, msg, len, dst, dst_len);
     }
     

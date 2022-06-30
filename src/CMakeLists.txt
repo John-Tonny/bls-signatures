@@ -1,6 +1,8 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 3.14 FATAL_ERROR)
 set (CMAKE_CXX_STANDARD 17)
 
+set (BUILD_BLS_TESTS 1)
+
 # CMake 3.14+
 include(FetchContent)
 
@@ -106,5 +108,14 @@ if (BUILD_BLS_BENCHMARKS)
     target_link_libraries(runbench blstmp relic_s sodium)
   else()
     target_link_libraries(runbench blstmp relic_s)
+  endif()
+endif()
+
+if (BUILD_BLS_TESTS)
+  add_executable(main main.cpp)
+  if (SODIUM_FOUND)
+    target_link_libraries(main blstmp relic_s sodium)
+  else()
+    target_link_libraries(main blstmp relic_s)
   endif()
 endif()

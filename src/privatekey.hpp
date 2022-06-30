@@ -52,6 +52,8 @@ class PrivateKey {
 
     ~PrivateKey();
 
+    std::vector<uint8_t> GetPublicKey(const bool fLegacy) const;
+
     const G1Element& GetG1Element() const;
     const G2Element& GetG2Element() const;
 
