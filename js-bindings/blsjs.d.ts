@@ -1,4 +1,5 @@
 export declare class AugSchemeMPL {
+  static get_public_key(sk: PrivateKey): Uint8Array;
   static sk_to_g1(sk: PrivateKey): G1Element;
   static key_gen(msg: Uint8Array): PrivateKey;
   static sign(sk: PrivateKey, msg: Uint8Array): G2Element;
@@ -24,6 +25,7 @@ export declare class BasicSchemeMPL {
 }
 
 export declare class PopSchemeMPL {
+  static get_public_key(sk: PrivateKey): Uint8Array;
   static sk_to_g1(sk: PrivateKey): G1Element;
   static key_gen(msg: Uint8Array): PrivateKey;
   static sign(sk: PrivateKey, msg: Uint8Array): G2Element;
@@ -39,7 +41,7 @@ export declare class PopSchemeMPL {
 }
 
 export declare class LegacySchemeMPL {
-  static get_public_key(sk: PrivateKey): G1Element;
+  static get_public_key(sk: PrivateKey): Uint8Array;
   static key_gen(msg: Uint8Array): PrivateKey;
   static sign(sk: PrivateKey, msg: Uint8Array): G2Element;
   static verify(pk: G1Element, msg: Uint8Array, sig: G2Element): boolean;
@@ -89,6 +91,7 @@ export declare class PrivateKey {
   static aggregate(pks: PrivateKey[]): PrivateKey;
   deepcopy(): PrivateKey;
   serialize(): Uint8Array;
+  get_public_key(sk: PrivateKey): Uint8Array;
   get_g1(): G1Element;
   get_g2(): G2Element;
   mul_g1(el: G1Element): G1Element;
@@ -112,6 +115,7 @@ export interface ModuleInstance {
   AugSchemeMPL: typeof AugSchemeMPL;
   BasicSchemeMPL: typeof BasicSchemeMPL;
   PopSchemeMPL: typeof PopSchemeMPL;
+  LegacySchemeMPL: typeof LegacySchemeMPL;
   G1Element: typeof G1Element;
   G2Element: typeof G2Element;
   PrivateKey: typeof PrivateKey;
