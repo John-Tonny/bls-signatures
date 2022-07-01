@@ -47,10 +47,11 @@ export declare class LegacySchemeMPL {
   static aggregate_secure(pks: G1Element[], sigs: G2Element[], msg:Uint8Array): G2Element;
   static verify_secure(pks: G1Element[], sig: G2Element, msg:Uint8Array): boolean;
   static aggregate_verify(pks: G1Element[], msgs: Uint8Array[], sig: G2Element): boolean;
+  */
   static derive_child_sk(sk: PrivateKey, index: number): PrivateKey;
   static derive_child_sk_unhardened(sk: PrivateKey, index: number): PrivateKey;
   static derive_child_pk_unhardened(pk: G1Element, index: number): G1Element;
-  */
+  
 }
 
 export declare class G1Element {

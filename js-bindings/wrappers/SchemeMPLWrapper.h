@@ -131,7 +131,6 @@ public:
   static val GetPublicKey(const PrivateKeyWrapper &seckey) {
     return helpers::toUint8Array(mpl.GetPublicKey(seckey.GetWrappedInstance()));
   }
- 
   
   static G2ElementWrapper Sign(const PrivateKeyWrapper &seckey, val messageVal) {
     std::vector<uint8_t> message = helpers::toVector(messageVal);
@@ -143,8 +142,6 @@ public:
     return mpl.Verify(pubkey.GetWrappedInstance(), Bytes(message), signature.GetWrappedInstance());
   }
  
-
-
 };
 
 }  // namespace js_wrappers

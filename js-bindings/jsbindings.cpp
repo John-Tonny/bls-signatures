@@ -64,15 +64,16 @@ EMSCRIPTEN_BINDINGS(blsjs) {
         .class_function("get_public_key", &LegacySchemeMPLWrapper::GetPublicKey)
         .class_function("key_gen", &LegacySchemeMPLWrapper::KeyGen)
 	.class_function("sign", &LegacySchemeMPLWrapper::Sign)
-        .class_function("verify", &LegacySchemeMPLWrapper::Verify);
+        .class_function("verify", &LegacySchemeMPLWrapper::Verify)
 	/*
-	.class_function("verify_secure", &AugSchemeMPLWrapper::VerifySecure)
-        .class_function("aggregate_secure", &AugSchemeMPLWrapper::AggregateSecure)
-        .class_function("aggregate_verify", &AugSchemeMPLWrapper::AggregateVerify)
-        .class_function("derive_child_sk", &AugSchemeMPLWrapper::DeriveChildSk)
-        .class_function("derive_child_sk_unhardened", &AugSchemeMPLWrapper::DeriveChildSkUnhardened)
-        .class_function("derive_child_pk_unhardened", &AugSchemeMPLWrapper::DeriveChildPkUnhardened);
+	.class_function("verify_secure", &LegacySchemeMPLWrapper::VerifySecure)
+        .class_function("aggregate_secure", &LegacySchemeMPLWrapper::AggregateSecure)
+        .class_function("aggregate_verify", &LegacySchemeMPLWrapper::AggregateVerify)
 	*/
+        .class_function("derive_child_sk", &LegacySchemeMPLWrapper::DeriveChildSk)
+        .class_function("derive_child_sk_unhardened", &LegacySchemeMPLWrapper::DeriveChildSkUnhardened)
+        .class_function("derive_child_pk_unhardened", &LegacySchemeMPLWrapper::DeriveChildPkUnhardened);
+	
 
     class_<G1ElementWrapper>("G1Element")
         .class_property("SIZE", &G1ElementWrapper::SIZE)
