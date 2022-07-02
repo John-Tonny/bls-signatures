@@ -60,7 +60,7 @@ export declare class G1Element {
   static SIZE: number;
   static from_bytes(bytes: Uint8Array): G1Element;
   static generator(): G2Element;
-  serialize(fLegacy: bool): Uint8Array;
+  serialize(fLegacy: boolean): Uint8Array;
   negate(): G1Element;
   deepcopy(): G1Element;
   get_fingerprint(): number;
@@ -76,7 +76,7 @@ export declare class G2Element {
   static from_g2(sk: G2Element): G2Element;
   static aggregate_sigs(sigs: G2Element[]): G2Element;
   static generator(): G2Element;
-  serialize(fLegacy: bool): Uint8Array;
+  serialize(fLegacy: boolean): Uint8Array;
   negate(): G2Element;
   deepcopy(): G2Element;
   add(el: G2Element): G2Element;
